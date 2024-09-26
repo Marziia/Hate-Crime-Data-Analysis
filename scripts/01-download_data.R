@@ -1,8 +1,8 @@
 #### Preamble ####
 # Purpose: Downloads and saves the data from the Open Data Toronto Database
-# Author: Rohan Alexander [...UPDATE THIS...]
+# Author: Marzia Zaidi
 # Date: 26 September 2024
-# Contact: rohan.alexander@utoronto.ca [...UPDATE THIS...]
+# Contact: Marzia.zaidi@mail.utoronto.ca
 # License: MIT
 # Pre-requisites: opendatatoronto, tidyverse, dplyr libraries installed
 # Any other information needed? Name of the data set to be downloaded
