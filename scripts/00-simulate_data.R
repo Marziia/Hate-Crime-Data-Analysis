@@ -11,7 +11,7 @@
 #### Workspace setup ####
 library(tidyverse)
 
-# [...UPDATE THIS...]
+
 
 #### Simulate data ####
 ## we would imagine that the hate crimes data set would have a year column for when the crime happened and this should probably be higher in latter years. 
@@ -37,7 +37,7 @@ probabilities <- c(rep(0.05, 7),  # 12 AM - 6 AM (higher probability for night)
                    rep(0.02, 11), # 7 AM - 5 PM (lower probability for day)
                    rep(0.05, 6))  # 6 PM - 11 PM (higher probability for night)
 
-# Normalize probabilities so they sum to 1 (optional, but R's `sample` will auto-normalize)
+# Normalize probabilities so they sum to 1 
 probabilities <- probabilities / sum(probabilities)
 
 # Generate random hours based on these probabilities
@@ -63,7 +63,7 @@ n <- 1000
 # Simulate time differences in minutes, centered at 30 mins with a standard deviation of 30 mins
 time_differences <- rnorm(n, mean = 30, sd = 30)
 
-# Ensure no negative time differences (optional, depending on your use case)
+# Ensure no negative time differences - since time reported is always after time of occurence
 time_differences <- pmax(time_differences, 0)
 
 # Create a histogram
