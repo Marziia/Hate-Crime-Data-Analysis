@@ -11,7 +11,7 @@
 #### Workspace setup ####
 library(tidyverse)
 
-
+# [...UPDATE THIS...]
 
 #### Simulate data ####
 ## we would imagine that the hate crimes data set would have a year column for when the crime happened and this should probably be higher in latter years. 
@@ -52,3 +52,22 @@ head(random_times)
 
 # Histogram to visualize distribution
 hist(random_hours, breaks = 0:24, col = "skyblue", main = "Distribution of Random Times of Day", xlab = "Hour of Day")
+
+
+## since these are crimes that have been reported, we might expect there to be a time reported and a time of occurence. We would expect the difference between these two times to be maybe half an hour, and we would also expect this to be relatively constant.
+set.seed(300)
+
+# Number of time differences to simulate
+n <- 1000  
+
+# Simulate time differences in minutes, centered at 30 mins with a standard deviation of 30 mins
+time_differences <- rnorm(n, mean = 30, sd = 30)
+
+# Ensure no negative time differences (optional, depending on your use case)
+time_differences <- pmax(time_differences, 0)
+
+# Create a histogram
+hist(time_differences, breaks = 30, col = "red",
+     main = "Histogram of Time Differences (centered at 30 mins)",
+     xlab = "Time Difference (minutes)",
+     ylab = "Frequency")
