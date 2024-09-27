@@ -7,9 +7,8 @@ thanks: "Code and data are available at: https://github.com/Marziia/Hate-Crime-D
 date: today
 date-format: long
 abstract: "Upon studying the history of reported hate crimes in Toronto, we observe that there has been a sharp spike in 2023. We also observe that most of the hate crimes happen during the day, i.e. in broad daylight. Finally, we see that while most of the crims are reported almost instantaneously, there are some that take up to a day to repor."
-format: pdf
+format: html
 number-sections: true
-bibliography: references.bib
 ---
 
 ```{r}
@@ -75,7 +74,6 @@ times <- data$OCCURRENCE_TIME
 
 # Pad integers to ensure four digits (HHMM format)
 times_padded <- sprintf("%04s", times)
-print(times_padded)
 
 # Extract hours and minutes
 hours <- as.integer(substr(times_padded, 1, 2))  # First two characters are the hours
@@ -83,7 +81,7 @@ minutes <- as.integer(substr(times_padded, 3, 4))  # Last two characters are the
 
 # Convert to total minutes since midnight
 total_minutes <- hours * 60 + minutes
-print(total_minutes)
+
 
 # Create a histogram of the total minutes since midnight
 hist(total_minutes, breaks = 24, col = "lightblue", 
@@ -102,8 +100,6 @@ hist(total_hours, breaks = 24, col = "lightblue",
 
 # we see most of these have been crimes during the day
 ```
-
-
 
 ```{r}
 # analyze the time between a crime happening and the report
@@ -136,38 +132,51 @@ hist(time_differences, breaks = 50, col = "red",
      ylab = "Frequency")
 
 # most of the crimes were rerported very quickly, with some being reported the next day (corresponding to the negative portion of the distribution)
+
+# this is a histogram of crimes by religion
+# Install and load necessary packages
+library(ggplot2)
+
+# Create the bar plot
+ggplot(data, aes(x = RELIGION_BIAS)) +
+  geom_bar(fill = "skyblue", color = "black") +
+  labs(title = "Frequency of hate crimes by religious bias", x = "Religion", y = "Count") +
+  theme_minimal() + theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 10))
+
+
+
+
+# this is a histogram of crimes by sexual orientation
+
+# Create the bar plot
+ggplot(data, aes(x = SEXUAL_ORIENTATION_BIAS)) +
+  geom_bar(fill = "red", color = "black") +
+  labs(title = "Frequency of hate crimes by sexual orientation", x = "Sexual Orientation", y = "Count") +
+  theme_minimal() + theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 10))
+
+# this is a histogram of crimes by race
+
+# Create the bar plot
+ggplot(data, aes(x = RACE_BIAS
+               )) +
+  geom_bar(fill = "red", color = "black") +
+  labs(title = "Frequency of hate crimes by race", x = "Race", y = "Count") +
+  theme_minimal() + theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 10))
 ```
 
 Talk way more about it.
 
 # Model
 
-The goal of our modelling strategy is to show that the number of crimes has increased over the years. We use a linear regression model to prove this]
+The goal of our modelling strategy is to show that the number of crimes has increased over the years. We use a linear regression model to prove this
 
 ## Model set-up
 
-Define $y_i$ as the number of seconds that the plane remained aloft. Then $\beta_i$ is the wing width and $\gamma_i$ is the wing length, both measured in millimeters.
-
-\begin{align} 
-y_i|\mu_i, \sigma &\sim \mbox{Normal}(\mu_i, \sigma) \\
-\mu_i &= \alpha + \beta_i + \gamma_i\\
-\alpha &\sim \mbox{Normal}(0, 2.5) \\
-\beta &\sim \mbox{Normal}(0, 2.5) \\
-\gamma &\sim \mbox{Normal}(0, 2.5) \\
-\sigma &\sim \mbox{Exponential}(1)
-\end{align}
-
-We run the model in R [@citeR] using the `rstanarm` package of @rstanarm. We use the default priors from `rstanarm`.
-
 ### Model justification
-
-We expect a positive relationship between the size of the wings and time spent aloft. In particular...
-
-We can use maths by including latex between dollar signs, for instance $\theta$.
 
 # Results
 
-Our results are summarized in @tbl-modelresults.
+Our results are summarized in
 
 ```{r}
 data$OCCURRENCE_YEAR <- as.integer(data$OCCURRENCE_YEAR)
@@ -194,79 +203,3 @@ ggplot(frequency_df, aes(x = Year_of_hate_crime, y = frequency)) +
        x = "Year of Hate crime",
        y = "Frequency")
 ```
-
-# Discussion
-
-## First discussion point {#sec-first-point}
-
-If my paper were 10 pages, then should be be at least 2.5 pages. The discussion is a chance to show off what you know and what you learnt from all this.
-
-## Second discussion point
-
-## Third discussion point
-
-## Weaknesses and next steps
-
-Weaknesses and next steps should also be included.
-
-\newpage
-
-\appendix
-
-# Appendix {.unnumbered}
-
-# Additional data details
-
-# Model details {#sec-model-details}
-
-## Posterior predictive check
-
-In @fig-ppcheckandposteriorvsprior-1 we implement a posterior predictive check. This shows...
-
-In @fig-ppcheckandposteriorvsprior-2 we compare the posterior with the prior. This shows...
-
-```{r}
-#| eval: true
-#| echo: false
-#| message: false
-#| warning: false
-#| label: fig-ppcheckandposteriorvsprior
-#| layout-ncol: 2
-#| fig-cap: "Examining how the model fits, and is affected by, the data"
-#| fig-subcap: ["Posterior prediction check", "Comparing the posterior with the prior"]
-
-pp_check(first_model) +
-  theme_classic() +
-  theme(legend.position = "bottom")
-
-posterior_vs_prior(first_model) +
-  theme_minimal() +
-  scale_color_brewer(palette = "Set1") +
-  theme(legend.position = "bottom") +
-  coord_flip()
-```
-
-## Diagnostics
-
-@fig-stanareyouokay-1 is a trace plot. It shows... This suggests...
-
-@fig-stanareyouokay-2 is a Rhat plot. It shows... This suggests...
-
-```{r}
-#| echo: false
-#| eval: true
-#| message: false
-#| warning: false
-#| label: fig-stanareyouokay
-#| fig-cap: "Checking the convergence of the MCMC algorithm"
-#| fig-subcap: ["Trace plot", "Rhat plot"]
-#| layout-ncol: 2
-
-plot(first_model, "trace")
-
-plot(first_model, "rhat")
-```
-
-\newpage
-
-# References
