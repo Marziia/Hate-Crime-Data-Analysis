@@ -23,6 +23,7 @@
 
 # Output files from R CMD check
 /*.Rcheck/
+/*.quarto/
 
 # RStudio files
 .Rproj.user/
