@@ -1,13 +1,12 @@
 ---
-title: "Analyzing Patterns and Biases in Hate Crimes: 
-A Toronto-Based Statistical Study"
-subtitle: 
+title: "Analyzing Patterns and Biases in Hate Crimes"
+subtitle: "A Toronto-Based Statistical Study"
 author: 
   - Marzia Zaidi
 thanks: "Code and data are available at: https://github.com/Marziia/Hate-Crime-Data-Analysis/tree/main."
 date: today
 date-format: long
-abstract: "This paper explores the patterns and biases of hate crimes in Toronto, drawing on data from the Hate Crimes Open Data dataset, which includes all verified hate crime occurrences reported since 2018. By examining various bias categories, such as race, religion, and sexual orientation. This study aims to uncover trends and underlying societal factors that contribute to hate-motivated violence in the city. The analysis reveals significant variations in the prevalence and nature of hate crimes, shedding light on the complexities of victimization and their broader implications for community cohesion. Additionally, this research evaluates the effectiveness of current policies and community initiatives designed to prevent hate crimes and promote inclusivity. Ultimately, the findings of this study contribute to a deeper understanding of hate crimes in Toronto, offering valuable insights that can inform strategies to foster a safer and more equitable society."
+abstract: "This paper explores the patterns and biases of hate crimes in Toronto, drawing on data from the Hate Crimes Open Data dataset, which includes all verified hate crime occurrences reported since 2018. By examining various bias categories, such as race, religion, and sexual orientation. This study aims to uncover trends and underlying societal factors that contribute to hate-motivated violence in the city. The analysis reveals significant variations in the prevalence and nature of hate crimes, shedding light on the complexities of victimization and their broader implications for community cohesion. Additionally, the findings of this study contribute to a deeper understanding of hate crimes in Toronto, offering valuable insights that can inform strategies to foster a safer and more equitable society."
 format: html
 number-sections: true
 ---
@@ -27,8 +26,6 @@ You can and should cross-reference sections and sub-sections. We use @citeR and 
 The remainder of this paper is structured as follows. @sec-data....
 
 # Data {#sec-data}
-
-Some of our data is of penguins (@fig-bills), from @palmerpenguins.
 
 ```{r}
 library(opendatatoronto)
@@ -64,9 +61,6 @@ hist(years_numeric, breaks = 7, col = "lightgrey",
 
 ```
 
-Talk more about it.
-
-And also planes (@fig-planes). (You can change the height and width, but don't worry about doing that until you have finished every other aspect of the paper - Quarto will try to make it look nice and the defaults usually work well once you have enough text.)
 
 ```{r}
 # we want to analyze if the crimes happened at night
@@ -143,8 +137,6 @@ ggplot(data, aes(x = RELIGION_BIAS)) +
   geom_bar(fill = "skyblue", color = "black") +
   labs(title = "Frequency of hate crimes by religious bias", x = "Religion", y = "Count") +
   theme_minimal() + theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 10))
-
-
 
 
 # this is a histogram of crimes by sexual orientation
