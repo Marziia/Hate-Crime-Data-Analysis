@@ -1,13 +1,12 @@
 ---
-title: "My title"
-subtitle: "My subtitle if needed"
+title: "A history of reported hate crimes in Toronto"
+subtitle: "Increased frequency poses risk to diversity"
 author: 
-  - First author
-  - Another author
-thanks: "Code and data are available at: LINK."
+  - Marzia Zaidi
+thanks: "Code and data are available at: https://github.com/Marziia/Hate-Crime-Data-Analysis/tree/main."
 date: today
 date-format: long
-abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
+abstract: "Upon studying the history of reported hate crimes in Toronto, we observe that there has been a sharp spike in 2023. We also observe that most of the hate crimes happen during the day, i.e. in broad daylight. Finally, we see that while most of the crims are reported almost instantaneously, there are some that take up to a day to repor."
 format: pdf
 number-sections: true
 bibliography: references.bib
@@ -19,9 +18,7 @@ bibliography: references.bib
 #| message: false
 
 library(tidyverse)
-library(palmerpenguins)
 ```
-
 
 # Introduction
 
@@ -29,24 +26,42 @@ You can and should cross-reference sections and sub-sections. We use @citeR and 
 
 The remainder of this paper is structured as follows. @sec-data....
 
-
-
 # Data {#sec-data}
 
 Some of our data is of penguins (@fig-bills), from @palmerpenguins.
 
 ```{r}
-#| label: fig-bills
-#| fig-cap: Bills of penguins
-#| echo: false
+library(opendatatoronto)
+library(tidyverse)
+library(dplyr)
+nameOfDataSet <- "hate-crimes-open-data"
+#### Download data ####
+package <- show_package(nameOfDataSet)
 
-ggplot(penguins, aes(x = island, fill = species)) +
-  geom_bar(alpha = 0.8) +
-  scale_fill_manual(values = c("darkorange","purple","cyan4"),
-                    guide = "none") +
-  theme_minimal() +
-  facet_wrap(~species, ncol = 1) +
-  coord_flip()
+# get all resources for this package
+resources <- list_package_resources(nameOfDataSet)
+
+# identify datastore resources; by default, Toronto Open Data sets datastore resource format to CSV for non-geospatial and GeoJSON for geospatial resources
+
+datastore_resources <- filter(resources, tolower(format) %in% c('csv', 'geojson'))
+
+# load the first datastore resource as a sample
+data <- filter(datastore_resources, row_number()==1) %>% get_resource()
+
+# first, we analyze if the number of crimes have increased over the years
+
+# Convert the string years to integers
+years_numeric <- as.integer(data$REPORTED_YEAR)
+
+# Create a histogram of the years
+hist(years_numeric, breaks = 7, col = "lightgrey", 
+     main = "Histogram of Years",
+     xlab = "Year",
+     ylab = "Frequency")
+
+# Looking at this, we can see that the trend was mostly non existent till 2022, and then in 2023, we had a spike in crimes.
+
+
 ```
 
 Talk more about it.
@@ -54,35 +69,84 @@ Talk more about it.
 And also planes (@fig-planes). (You can change the height and width, but don't worry about doing that until you have finished every other aspect of the paper - Quarto will try to make it look nice and the defaults usually work well once you have enough text.)
 
 ```{r}
-#| label: fig-planes
-#| fig-cap: Relationship between wing length and width
-#| echo: false
-#| warning: false
-#| message: false
+# we want to analyze if the crimes happened at night
+# Here is the vector of time integers
+times <- data$OCCURRENCE_TIME
 
-analysis_data <- read_csv(here::here("data/analysis_data/analysis_data.csv"))
+# Pad integers to ensure four digits (HHMM format)
+times_padded <- sprintf("%04s", times)
+print(times_padded)
 
-analysis_data |> 
-  ggplot(aes(x = width, y = length)) +
-  geom_point(alpha = 0.8) +
-  theme_minimal() +
-  labs(x = "Wing width (mm)",
-       y = "Wing length (mm)")
+# Extract hours and minutes
+hours <- as.integer(substr(times_padded, 1, 2))  # First two characters are the hours
+minutes <- as.integer(substr(times_padded, 3, 4))  # Last two characters are the minutes
+
+# Convert to total minutes since midnight
+total_minutes <- hours * 60 + minutes
+print(total_minutes)
+
+# Create a histogram of the total minutes since midnight
+hist(total_minutes, breaks = 24, col = "lightblue", 
+     main = "Histogram of Times (in minutes since midnight)",
+     xlab = "Minutes since midnight",
+     ylab = "Frequency")
+
+# Convert total minutes to hours (fractional)
+total_hours <- total_minutes / 60
+
+# Create a histogram of the total hours since midnight
+hist(total_hours, breaks = 24, col = "lightblue", 
+     main = "Histogram of Times (in hours since midnight)",
+     xlab = "Hours since midnight",
+     ylab = "Frequency")
+
+# we see most of these have been crimes during the day
 ```
 
-Talk way more about it. 
 
 
+```{r}
+# analyze the time between a crime happening and the report
+# Function to convert string integers to total minutes since midnight
+convert_to_minutes <- function(time_strings) {
+  # Pad the time strings to ensure four digits (HHMM format)
+  times_padded <- sprintf("%04s", time_strings)
+  
+  # Extract hours and minutes
+  hours <- as.integer(substr(times_padded, 1, 2))  # First two characters are hours
+  minutes <- as.integer(substr(times_padded, 3, 4))  # Last two characters are minutes
+  
+  # Convert to total minutes since midnight
+  total_minutes <- hours * 60 + minutes
+  return(total_minutes)
+}
+
+# Convert both columns to minutes since midnight
+time_start_minutes <- convert_to_minutes(data$OCCURRENCE_TIME)
+time_end_minutes <- convert_to_minutes(data$REPORTED_TIME)
+
+
+# Calculate time differences (end time - start time)
+time_differences <- time_end_minutes - time_start_minutes
+
+# Create a histogram of the time differences
+hist(time_differences, breaks = 50, col = "red",
+     main = "Histogram of Time Differences (in minutes)",
+     xlab = "Time Difference (minutes)",
+     ylab = "Frequency")
+
+# most of the crimes were rerported very quickly, with some being reported the next day (corresponding to the negative portion of the distribution)
+```
+
+Talk way more about it.
 
 # Model
 
-The goal of our modelling strategy is twofold. Firstly,...
-
-Here we briefly describe the Bayesian analysis model used to investigate... Background details and diagnostics are included in [Appendix -@sec-model-details].
+The goal of our modelling strategy is to show that the number of crimes has increased over the years. We use a linear regression model to prove this]
 
 ## Model set-up
 
-Define $y_i$ as the number of seconds that the plane remained aloft. Then $\beta_i$ is the wing width and $\gamma_i$ is the wing length, both measured in millimeters.  
+Define $y_i$ as the number of seconds that the plane remained aloft. Then $\beta_i$ is the wing width and $\gamma_i$ is the wing length, both measured in millimeters.
 
 \begin{align} 
 y_i|\mu_i, \sigma &\sim \mbox{Normal}(\mu_i, \sigma) \\
@@ -95,54 +159,47 @@ y_i|\mu_i, \sigma &\sim \mbox{Normal}(\mu_i, \sigma) \\
 
 We run the model in R [@citeR] using the `rstanarm` package of @rstanarm. We use the default priors from `rstanarm`.
 
-
 ### Model justification
 
 We expect a positive relationship between the size of the wings and time spent aloft. In particular...
 
 We can use maths by including latex between dollar signs, for instance $\theta$.
 
-
 # Results
 
 Our results are summarized in @tbl-modelresults.
 
 ```{r}
-#| echo: false
-#| eval: true
-#| warning: false
-#| message: false
+data$OCCURRENCE_YEAR <- as.integer(data$OCCURRENCE_YEAR)
+frequency_table <- table(data$OCCURRENCE_YEAR)
+print(frequency_table)
 
-library(rstanarm)
-
-first_model <-
-  readRDS(file = here::here("models/first_model.rds"))
 ```
 
 ```{r}
-#| echo: false
-#| eval: true
-#| label: tbl-modelresults
-#| tbl-cap: "Explanatory models of flight time based on wing width and wing length"
-#| warning: false
+frequency_df <- as.data.frame(frequency_table)
+colnames(frequency_df) <- c("Year_of_hate_crime", "frequency")
+frequency_df$Year_of_hate_crime <- as.numeric(as.character(frequency_df$Year_of_hate_crime))
+# Fit the linear regression model
+model <- lm(frequency ~ Year_of_hate_crime, data = frequency_df)
 
-modelsummary::modelsummary(
-  list(
-    "First model" = first_model
-  ),
-  statistic = "mad",
-  fmt = 2
-)
+# Print the summary of the model
+summary(model)
+# Load ggplot2
+library(ggplot2)
+ggplot(frequency_df, aes(x = Year_of_hate_crime, y = frequency)) +
+  geom_point(color = "blue") +
+  geom_smooth(method = "lm", color = "red") +
+  labs(title = "Linear Regression of Frequency vs Year of Hate Crime",
+       x = "Year of Hate crime",
+       y = "Frequency")
 ```
-
-
-
 
 # Discussion
 
 ## First discussion point {#sec-first-point}
 
-If my paper were 10 pages, then should be be at least 2.5 pages. The discussion is a chance to show off what you know and what you learnt from all this. 
+If my paper were 10 pages, then should be be at least 2.5 pages. The discussion is a chance to show off what you know and what you learnt from all this.
 
 ## Second discussion point
 
@@ -156,8 +213,7 @@ Weaknesses and next steps should also be included.
 
 \appendix
 
-# Appendix {-}
-
+# Appendix {.unnumbered}
 
 # Additional data details
 
@@ -167,7 +223,7 @@ Weaknesses and next steps should also be included.
 
 In @fig-ppcheckandposteriorvsprior-1 we implement a posterior predictive check. This shows...
 
-In @fig-ppcheckandposteriorvsprior-2 we compare the posterior with the prior. This shows... 
+In @fig-ppcheckandposteriorvsprior-2 we compare the posterior with the prior. This shows...
 
 ```{r}
 #| eval: true
@@ -211,11 +267,6 @@ plot(first_model, "trace")
 plot(first_model, "rhat")
 ```
 
-
-
 \newpage
 
-
 # References
-
-
