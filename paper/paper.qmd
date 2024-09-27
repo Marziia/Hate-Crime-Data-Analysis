@@ -1,12 +1,13 @@
 ---
-title: "A history of reported hate crimes in Toronto"
-subtitle: "Increased frequency poses risk to diversity"
+title: "Analyzing Patterns and Biases in Hate Crimes: 
+A Toronto-Based Statistical Study"
+subtitle: 
 author: 
   - Marzia Zaidi
 thanks: "Code and data are available at: https://github.com/Marziia/Hate-Crime-Data-Analysis/tree/main."
 date: today
 date-format: long
-abstract: "Upon studying the history of reported hate crimes in Toronto, we observe that there has been a sharp spike in 2023. We also observe that most of the hate crimes happen during the day, i.e. in broad daylight. Finally, we see that while most of the crims are reported almost instantaneously, there are some that take up to a day to repor."
+abstract: "This paper explores the patterns and biases of hate crimes in Toronto, drawing on data from the Hate Crimes Open Data dataset, which includes all verified hate crime occurrences reported since 2018. By examining various bias categories, such as race, religion, and sexual orientation. This study aims to uncover trends and underlying societal factors that contribute to hate-motivated violence in the city. The analysis reveals significant variations in the prevalence and nature of hate crimes, shedding light on the complexities of victimization and their broader implications for community cohesion. Additionally, this research evaluates the effectiveness of current policies and community initiatives designed to prevent hate crimes and promote inclusivity. Ultimately, the findings of this study contribute to a deeper understanding of hate crimes in Toronto, offering valuable insights that can inform strategies to foster a safer and more equitable society."
 format: html
 number-sections: true
 ---
